@@ -1,0 +1,47 @@
+{
+  "blueprint": "ssh_bruteforce",
+  "modes": {
+    "default": {
+      "description": "Empty home directory. Attacker sees a minimal system.",
+      "files": []
+    },
+    "expose_fake_backup": {
+      "description": "Reveal backup files to lure attacker toward credentials.",
+      "trigger_hint": "attacker tried username backup or admin",
+      "replace": false,
+      "files": [
+        {
+          "path": "home/admin/credentials.txt",
+          "template": "decoys/credentials.txt.j2"
+        },
+        {
+          "path": "var/backups/customer_db.sql",
+          "template": "decoys/db_backup.sql.j2"
+        },
+        {
+          "path": "opt/scripts/backup_mysql.sh",
+          "template": "decoys/backup_script.sh.j2"
+        }
+      ]
+    },
+    "fake_admin_success": {
+      "description": "Simulate successful admin login environment.",
+      "trigger_hint": "attacker successfully logged in",
+      "replace": false,
+      "files": [
+        {
+          "path": "home/admin/.bash_history",
+          "template": "decoys/bash_history.j2"
+        },
+        {
+          "path": "home/admin/.ssh/authorized_keys",
+          "template": "decoys/authorized_keys.j2"
+        },
+        {
+          "path": "root/deploy.sh",
+          "template": "decoys/deploy_script.j2"
+        }
+      ]
+    }
+  }
+}

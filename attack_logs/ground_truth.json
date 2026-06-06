@@ -1,0 +1,467 @@
+{
+  "ssh_001": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup",
+      "fake_admin_success"
+    ],
+    "notes": "Fast spray with root/admin/backup \u2014 expose_fake_backup triggers first, fake_admin_success when root cracks"
+  },
+  "ssh_002": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Targeted backup credential stuffing \u2014 no root in list, only backup/deploy/sysbackup; expose_fake_backup only"
+  },
+  "ssh_003": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup",
+      "fake_admin_success"
+    ],
+    "notes": "Recon then escalation \u2014 backup/admin targeted first, root finishes; both switches stack"
+  },
+  "ssh_004": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Persistent non-root targeting \u2014 service/support/backup accounts, no root, no expected success"
+  },
+  "web_001": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel",
+      "expose_fake_config"
+    ],
+    "notes": "Admin panel probe + config file fishing"
+  },
+  "web_002": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel",
+      "expose_fake_config"
+    ],
+    "notes": "Multiple login attempts + backup/config probing"
+  },
+  "web_003": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel"
+    ],
+    "notes": "SQLi-flavored admin panel attack \u2014 /login and /admin probed multiple times with injection payloads"
+  },
+  "web_004": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "expose_fake_config",
+      "fake_admin_panel"
+    ],
+    "notes": "Config file hunting + admin brute force"
+  },
+  "unknown_001": {
+    "attack_type": "Unknown",
+    "blueprint": "monitor_only",
+    "expected_behavior_switches": [],
+    "notes": "SMB enumeration probe \u2014 no matching blueprint, monitor only"
+  },
+  "unknown_002": {
+    "attack_type": "Unknown",
+    "blueprint": "monitor_only",
+    "expected_behavior_switches": [],
+    "notes": "MySQL port probe with auth attempts \u2014 no matching blueprint, monitor only"
+  },
+  "real_ssh_hydra_root": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Hydra root-only spray, small wordlist",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_admin": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Hydra admin-only spray",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_backup": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Hydra backup account spray \u2014 direct trigger for expose_fake_backup",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_multi_user": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Multi-username spray: root/admin/backup/ubuntu/pi/user/test",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_ubuntu": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [],
+    "notes": "ubuntu user \u2014 scores SSH port but no backup/admin trigger",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_medusa_root": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Medusa root spray \u2014 tool diversity",
+    "category": "ssh_brute_force",
+    "tool": "medusa"
+  },
+  "real_ssh_medusa_admin": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Medusa admin spray",
+    "category": "ssh_brute_force",
+    "tool": "medusa"
+  },
+  "real_ssh_hydra_service_accounts": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [],
+    "notes": "Service accounts only (no admin/backup/root) \u2014 should NOT trigger expose_fake_backup",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_fast_root": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "High-thread root spray to stress Cowrie",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_pi": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [],
+    "notes": "Raspberry Pi default account targeting",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_test": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [],
+    "notes": "test user \u2014 SSH port match only",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_hydra_deploy": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [],
+    "notes": "deploy service account \u2014 non-trigger username",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_medusa_multi": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Medusa multi-user, covers backup trigger",
+    "category": "ssh_brute_force",
+    "tool": "medusa"
+  },
+  "real_ssh_hydra_backup_root_combo": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "backup+root+admin only \u2014 deterministic trigger",
+    "category": "ssh_brute_force",
+    "tool": "hydra"
+  },
+  "real_ssh_nmap_scan": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [],
+    "notes": "Nmap SSH service scan \u2014 produces SSH events without brute force",
+    "category": "vulnerability_scan",
+    "tool": "nmap"
+  },
+  "real_ssh_nmap_brute": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "Nmap ssh-brute NSE \u2014 alternative tool path",
+    "category": "vulnerability_scan",
+    "tool": "nmap"
+  },
+  "real_web_gobuster_dir": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel",
+      "expose_fake_config"
+    ],
+    "notes": "Gobuster common dirs \u2014 hits /admin, /.env, /config, /backup",
+    "category": "web_enumeration",
+    "tool": "gobuster"
+  },
+  "real_web_gobuster_ext": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "expose_fake_config"
+    ],
+    "notes": "Gobuster with .php/.bak/.env/.sql extensions \u2014 targets config files",
+    "category": "web_enumeration",
+    "tool": "gobuster"
+  },
+  "real_web_ffuf_dir": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel",
+      "expose_fake_config"
+    ],
+    "notes": "ffuf directory fuzz \u2014 fast, wide coverage",
+    "category": "web_enumeration",
+    "tool": "ffuf"
+  },
+  "real_web_ffuf_config": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "expose_fake_config"
+    ],
+    "notes": "ffuf targeted at config/credential paths \u2014 /.env, /config, /backup/db.sql",
+    "category": "web_enumeration",
+    "tool": "ffuf"
+  },
+  "real_web_nikto_basic": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel"
+    ],
+    "notes": "Nikto basic scan \u2014 hits admin paths with various checks",
+    "category": "vulnerability_scan",
+    "tool": "nikto"
+  },
+  "real_web_nikto_full": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel",
+      "expose_fake_config"
+    ],
+    "notes": "Nikto full scan with all tuning options",
+    "category": "vulnerability_scan",
+    "tool": "nikto"
+  },
+  "real_web_nmap_http": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [],
+    "notes": "Nmap HTTP scripts \u2014 enumeration without heavy path probing",
+    "category": "vulnerability_scan",
+    "tool": "nmap"
+  },
+  "real_web_nmap_sqli": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel"
+    ],
+    "notes": "Nmap SQL injection scan against login form",
+    "category": "web_exploitation",
+    "tool": "nmap"
+  },
+  "real_web_curl_admin_probe": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel",
+      "expose_fake_config"
+    ],
+    "notes": "curl script: repeated admin/login GETs + POST brute + .env/.config probes",
+    "category": "web_exploitation",
+    "tool": "curl"
+  },
+  "real_web_curl_sqli_payloads": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel"
+    ],
+    "notes": "curl SQLi payloads against /login and /admin",
+    "category": "web_exploitation",
+    "tool": "curl"
+  },
+  "real_web_hydra_login": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel"
+    ],
+    "notes": "Hydra HTTP POST form brute against /login",
+    "category": "credential_attack",
+    "tool": "hydra"
+  },
+  "real_web_hydra_admin_form": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel"
+    ],
+    "notes": "Hydra HTTP POST against /admin form",
+    "category": "credential_attack",
+    "tool": "hydra"
+  },
+  "real_web_bot_activity": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel",
+      "expose_fake_config"
+    ],
+    "notes": "Simulated bot: random UA rotation, mixed rapid GET/POST, common paths",
+    "category": "bot_activity",
+    "tool": "curl"
+  },
+  "real_web_ffuf_passwords": {
+    "attack_type": "Web Attack",
+    "blueprint": "web_attack",
+    "expected_behavior_switches": [
+      "fake_admin_panel"
+    ],
+    "notes": "ffuf POST credential brute against /login",
+    "category": "credential_attack",
+    "tool": "ffuf"
+  },
+  "real_ssh_postex_light": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "paramiko post-exploit: login + basic recon commands (id, uname, ls)",
+    "category": "ssh_post_exploitation",
+    "tool": "paramiko"
+  },
+  "real_ssh_postex_heavy": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup",
+      "fake_admin_success"
+    ],
+    "notes": "paramiko post-exploit: full credential/file enumeration, downloads decoys",
+    "category": "ssh_post_exploitation",
+    "tool": "paramiko"
+  },
+  "real_ssh_postex_backup_read": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup"
+    ],
+    "notes": "paramiko: login as backup, read decoy files",
+    "category": "ssh_post_exploitation",
+    "tool": "paramiko"
+  },
+  "real_ssh_postex_root_escalation": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup",
+      "fake_admin_success"
+    ],
+    "notes": "paramiko: escalation from backup \u2192 root-level access simulation",
+    "category": "ssh_post_exploitation",
+    "tool": "paramiko"
+  },
+  "real_ssh_postex_data_exfil": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [
+      "expose_fake_backup",
+      "fake_admin_success"
+    ],
+    "notes": "paramiko: full exfil simulation \u2014 wget decoys, cat creds, enumerate history",
+    "category": "ssh_post_exploitation",
+    "tool": "paramiko"
+  },
+  "real_ssh_recon_only": {
+    "attack_type": "SSH Brute Force",
+    "blueprint": "ssh_bruteforce",
+    "expected_behavior_switches": [],
+    "notes": "paramiko: login only + minimal recon, no backup/admin username \u2192 no switch expected",
+    "category": "ssh_post_exploitation",
+    "tool": "paramiko"
+  },
+  "real_unknown_smb_probe": {
+    "attack_type": "Unknown",
+    "blueprint": "monitor_only",
+    "expected_behavior_switches": [],
+    "notes": "SMB port probe \u2014 no matching blueprint, monitor_only expected",
+    "category": "unknown",
+    "tool": "nmap"
+  },
+  "real_unknown_mysql_probe": {
+    "attack_type": "Unknown",
+    "blueprint": "monitor_only",
+    "expected_behavior_switches": [],
+    "notes": "MySQL port probe \u2014 monitor_only",
+    "category": "unknown",
+    "tool": "nmap"
+  },
+  "real_unknown_rdp_probe": {
+    "attack_type": "Unknown",
+    "blueprint": "monitor_only",
+    "expected_behavior_switches": [],
+    "notes": "RDP port probe \u2014 no blueprint for RDP yet",
+    "category": "unknown",
+    "tool": "nmap"
+  },
+  "real_unknown_ftp_probe": {
+    "attack_type": "Unknown",
+    "blueprint": "monitor_only",
+    "expected_behavior_switches": [],
+    "notes": "FTP scan \u2014 monitor_only expected",
+    "category": "unknown",
+    "tool": "nmap"
+  }
+}

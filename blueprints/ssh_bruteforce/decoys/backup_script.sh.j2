@@ -1,0 +1,16 @@
+#!/bin/bash
+# MySQL backup script — runs via cron at 03:00 daily
+
+DB_HOST="db.internal.corp.local"
+DB_USER="backupsvc"
+DB_PASS="B@ckupP@ss#99"
+DB_NAME="customer_data"
+BACKUP_DIR="/var/backups"
+DATE=$(date +%Y%m%d)
+
+mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" \
+  > "$BACKUP_DIR/customer_db_$DATE.sql"
+
+echo "Backup complete: $BACKUP_DIR/customer_db_$DATE.sql"
+# Transfer to remote
+scp "$BACKUP_DIR/customer_db_$DATE.sql" backup@backup.internal.corp.local:/backups/

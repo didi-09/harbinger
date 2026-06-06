@@ -1,0 +1,12 @@
+ls -la /home/admin
+cd /var/backups
+ls -la
+cat customer_db_20250410.sql | head -50
+mysql -h db.internal.corp.local -u dbadmin -pSup3rS3cur3DB!2024 customer_data
+SELECT * FROM customers LIMIT 10;
+exit
+ssh backup@backup.internal.corp.local
+scp /var/backups/customer_db.sql backup@backup.internal.corp.local:/backups/
+sudo systemctl restart nginx
+cat /root/deploy.sh
+bash /root/deploy.sh

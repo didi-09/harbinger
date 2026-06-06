@@ -1,0 +1,12 @@
+{
+  "id": "ssh_004",
+  "source_ip": "10.10.10.77",
+  "destination_port": 22,
+  "timestamp": "2025-05-11T04:45:00Z",
+  "events": [
+    "Failed password for backup from 10.10.10.77 port 33010 ssh2",
+    "Failed password for service from 10.10.10.77 port 33011 ssh2",
+    "Failed password for support from 10.10.10.77 port 33012 ssh2",
+    "Failed password for operator from 10.10.10.77 port 33013 ssh2"
+  ]
+}

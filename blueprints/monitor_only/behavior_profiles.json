@@ -1,0 +1,13 @@
+{
+  "blueprint": "monitor_only",
+  "modes": {
+    "default": {
+      "description": "Passive capture only. No deception, no interaction.",
+      "files": []
+    },
+    "passive": {
+      "description": "Passive capture only. No deception, no interaction.",
+      "files": []
+    }
+  }
+}

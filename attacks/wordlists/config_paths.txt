@@ -1,0 +1,13 @@
+.env
+config.php.bak
+backup/db.sql
+config
+backup
+config.php
+.env.local
+.env.backup
+.env.old
+settings.php
+wp-config.php
+database.yml
+credentials.txt

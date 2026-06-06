@@ -1,0 +1,10 @@
+{
+  "name": "monitor_only",
+  "description": "Passive monitoring only — no interaction honeypot",
+  "image": "nicolaka/netshoot:latest",
+  "ports": {},
+  "allowed_modes": ["passive"],
+  "log_format": "tcpdump",
+  "honeyfs_mount": null,
+  "logs_mount": "/logs"
+}

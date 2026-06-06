@@ -1,0 +1,23 @@
+#!/bin/bash
+# Production deploy script — internal use only
+
+REGISTRY="registry.corp.local:5000"
+APP="customer-portal"
+TAG="v2.1.4"
+
+echo "[deploy] Pulling $REGISTRY/$APP:$TAG"
+docker pull "$REGISTRY/$APP:$TAG"
+
+echo "[deploy] Stopping old container"
+docker stop customer-portal-prod 2>/dev/null
+
+echo "[deploy] Starting new container"
+docker run -d \
+  --name customer-portal-prod \
+  -p 443:8443 \
+  -e DB_HOST=db.internal.corp.local \
+  -e DB_PASS=Sup3rS3cur3DB!2024 \
+  -e SECRET_KEY=pr0d-s3cr3t-k3y-2024 \
+  "$REGISTRY/$APP:$TAG"
+
+echo "[deploy] Done."

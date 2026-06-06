@@ -1,0 +1,13 @@
+{
+  "id": "ssh_001",
+  "source_ip": "10.0.0.15",
+  "destination_port": 22,
+  "timestamp": "2025-05-11T01:00:00Z",
+  "events": [
+    "Failed password for root from 10.0.0.15 port 54312 ssh2",
+    "Failed password for admin from 10.0.0.15 port 54313 ssh2",
+    "Failed password for backup from 10.0.0.15 port 54314 ssh2",
+    "Invalid user ubuntu from 10.0.0.15 port 54315",
+    "Failed password for root from 10.0.0.15 port 54316 ssh2"
+  ]
+}

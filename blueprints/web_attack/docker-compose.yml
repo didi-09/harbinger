@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  flask-honeypot:
+    build:
+      context: ../../docker/flask-honeypot
+    container_name: ${SESSION_ID}
+    ports:
+      - "${WEB_PORT:-8080}:5000"
+    volumes:
+      - ${HONEYFS_PATH}:/app/honeyfs
+      - ${LOGS_PATH}:/app/logs
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped

@@ -1,0 +1,12 @@
+{
+  "id": "ssh_003",
+  "source_ip": "172.16.5.200",
+  "destination_port": 22,
+  "timestamp": "2025-05-11T03:30:00Z",
+  "events": [
+    "Failed password for backup from 172.16.5.200 port 62101 ssh2",
+    "Failed password for admin from 172.16.5.200 port 62102 ssh2",
+    "Accepted password for root from 172.16.5.200 port 62103 ssh2",
+    "Failed password for operator from 172.16.5.200 port 62104 ssh2"
+  ]
+}

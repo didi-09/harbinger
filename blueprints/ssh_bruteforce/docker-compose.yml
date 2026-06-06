@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: ${SESSION_ID}
+    ports:
+      - "${SSH_PORT:-2222}:2222"
+    volumes:
+      - ${HONEYFS_PATH}:/cowrie/var/lib/cowrie/honeyfs
+      - ${LOGS_PATH}:/cowrie/var/log/cowrie
+    environment:
+      - COWRIE_HOSTNAME=prod-server-01
+    restart: unless-stopped

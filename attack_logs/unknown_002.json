@@ -1,0 +1,14 @@
+{
+  "id": "unknown_002",
+  "source_ip": "192.168.99.50",
+  "destination_port": 3306,
+  "timestamp": "2025-05-11T10:00:00Z",
+  "events": [
+    "Connection from 192.168.99.50 to port 3306",
+    "Client sent version probe: MySQL Handshake",
+    "Authentication attempt: user=root",
+    "Authentication attempt: user=admin",
+    "Handshake error: access denied for root@192.168.99.50",
+    "Connection closed after 4 attempts"
+  ]
+}

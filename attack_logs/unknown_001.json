@@ -1,0 +1,14 @@
+{
+  "id": "unknown_001",
+  "source_ip": "10.0.0.99",
+  "destination_port": 445,
+  "timestamp": "2025-05-11T09:00:00Z",
+  "events": [
+    "SMB connection attempt from 10.0.0.99",
+    "NTLM authentication request",
+    "Access denied on IPC$ share",
+    "SMB share enumeration: ADMIN$, C$, SYSVOL",
+    "Named pipe request: \\PIPE\\srvsvc",
+    "Connection closed by remote host"
+  ]
+}

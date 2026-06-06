@@ -1,0 +1,138 @@
+# orchestration_policy.yaml — OpenClaw Orchestration Policy  (#13)
+#
+# Single source of truth for:
+#   - Attack classification rules (mirrors config.json classify_rules)
+#   - Behavior-switching decision rules (mirrors SKILL.md tables)
+#   - Loop-control parameters (mirrors config.json loop_control)
+#
+# This file is consumed by policy/policy_engine.py, referenced in
+# skills/honeypot-master/SKILL.md, and tested by security/log_poisoning.py.
+
+# ── Classification ──────────────────────────────────────────────────────────
+# Each blueprint gets a scoring section. Scores are summed; if the winner
+# exceeds confidence_threshold the blueprint is deployed; otherwise monitor_only.
+
+classification:
+  confidence_threshold: 0.6
+
+  blueprints:
+    ssh_bruteforce:
+      port_score: 0.4       # added when destination_port matches
+      ports: [22]
+      keyword_score: 0.1    # added per matching keyword
+      keywords:
+        - "Failed password"
+        - "Invalid user"
+        - "authentication failure"
+        - "ssh"
+        - "sshd"
+      username_score: 0.05  # added per matching username (word-boundary match)
+      usernames:
+        - root
+        - admin
+        - backup
+        - ubuntu
+        - pi
+        - user
+        - test
+
+    web_attack:
+      port_score: 0.4
+      ports: [80, 443, 8080, 8443]
+      keyword_score: 0.08
+      keywords:
+        - "GET"
+        - "POST"
+        - "HTTP"
+        - "sql"
+        - "SELECT"
+        - "UNION"
+        - "script"
+        - "alert"
+        - "passwd"
+        - ".env"
+        - "wp-admin"
+        - "phpmyadmin"
+      path_score: 0.07      # added per matching path literal
+      paths:
+        - /admin
+        - /login
+        - /.env
+        - /config
+        - /backup
+        - /wp-admin
+        - /phpmyadmin
+
+# ── Behavior Switching ───────────────────────────────────────────────────────
+# Rules are evaluated in order. First matching rule wins for each mode.
+# Mode switching is idempotent: re-entering the current mode is a no-op.
+
+switching:
+  ssh_bruteforce:
+    # Rule 1 — highest priority: successful login → full admin simulation
+    - id: ssh_success
+      condition:
+        event_type: login_attempt
+        field: success
+        value: true
+      target_mode: fake_admin_success
+      description: >
+        Attacker gained access via valid credentials. Switch to full admin
+        environment to maximise dwell time and intelligence collection.
+
+    # Rule 2 — backup/admin/root probed → expose lure files
+    - id: ssh_backup_user
+      condition:
+        event_type: login_attempt
+        field: username
+        values: [backup, admin, root]
+      target_mode: expose_fake_backup
+      description: >
+        Attacker is targeting privileged/backup accounts. Reveal backup
+        credential files to deepen engagement.
+
+  web_attack:
+    # Rule 1 — config file probed → expose fake .env / config.php.bak
+    - id: web_config_probe
+      condition:
+        event_type: connection
+        field: path
+        values: ["/.env", "/config.php.bak", "/backup/db.sql", "/config", "/backup"]
+      target_mode: expose_fake_config
+      description: >
+        Attacker is hunting for configuration/credential files. Serve a
+        convincing fake .env and config.php.bak.
+
+    # Rule 2 — admin panel probed multiple times → expose fake admin dashboard
+    - id: web_admin_probe
+      condition:
+        event_type: connection
+        field: path
+        values: ["/admin", "/login", "/dashboard", "/admin/login"]
+        min_visits: 2            # trigger only after ≥2 visits to any of these
+      target_mode: fake_admin_panel
+      description: >
+        Repeated admin-panel probing indicates targeted credential attack.
+        Serve a convincing admin dashboard to maximise intelligence collection.
+
+  monitor_only:
+    # No switching available on monitor_only sessions
+    []
+
+# ── Loop Control ─────────────────────────────────────────────────────────────
+loop_control:
+  max_steps: 10
+  high_engagement_threshold: 10
+  collapse_threshold: 0
+  collapse_min_steps: 3
+  # After any behavior switch, poll logs at least N more times before stopping
+  min_polls_after_switch: 2
+
+# ── Score Weights ─────────────────────────────────────────────────────────────
+score_weights:
+  connection: 1
+  login_attempt: 2
+  command_executed: 3
+  file_read: 4
+  file_download: 5
+  no_new_activity: -2

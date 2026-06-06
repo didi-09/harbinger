@@ -1,0 +1,11 @@
+log_id,correct_type,correct_blueprint,switches_triggered,switches_correct,score_after_switch,report_generated,steps,events_total,engagement_score,switch_correct,switch_false_positive,switch_wrong,switch_missed,artifact_expected,artifact_present,artifact_accuracy_pct,score_delta_after_switch
+ssh_001,True,True,1,1,94,True,8,118,269,1,0,0,1,6,3,50.0,175
+ssh_002,True,True,1,1,56,True,9,53,82,1,0,0,0,3,3,100.0,26
+ssh_003,True,True,1,1,10,True,8,67,100,1,0,0,1,6,3,50.0,90
+ssh_004,True,True,1,1,6,True,8,118,170,1,0,0,0,3,3,100.0,164
+web_001,True,True,2,2,5,True,8,24,32,2,0,0,0,4,4,100.0,27
+web_002,True,True,2,2,5,True,8,32,49,2,0,0,0,4,4,100.0,44
+web_003,True,True,2,2,6,True,8,18,18,1,1,0,0,2,2,100.0,12
+web_004,True,True,2,2,12,True,8,60,69,2,0,0,0,4,4,100.0,57
+unknown_001,True,True,0,0,,True,1,0,0,0,0,0,0,0,0,,0
+unknown_002,True,True,0,0,,True,1,0,0,0,0,0,0,0,0,,0

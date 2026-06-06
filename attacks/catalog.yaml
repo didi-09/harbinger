@@ -1,0 +1,536 @@
+# attacks/catalog.yaml — Real-attack dataset catalog  (#1, #15)
+#
+# Each entry describes one adversarial session to run against a live honeypot
+# container using the real attack tool installed on Kali Linux. Sessions are
+# driven by attacks/run_attacks.py which:
+#   1. Deploys the honeypot with a dynamic port (--blueprint <target_blueprint>)
+#   2. Runs the tool command against the allocated port
+#   3. Polls logs and triggers behavior switches via the policy engine
+#   4. Generates a report and stops the container
+#   5. Records results to attack_logs/ground_truth.json and results/dataset_manifest.csv
+#
+# Field reference:
+#   id:                 unique run identifier → session hp_<id>
+#   category:           attack category for paper table grouping
+#   tool:               binary on PATH used to generate traffic
+#   target_blueprint:   honeypot blueprint to deploy
+#   port_key:           "ssh" | "web" — which host_port to substitute into command
+#   command:            shell command template; {host} → localhost, {port} → allocated port
+#                       {wordlist} → /usr/share/wordlists/rockyou.txt
+#                       {dirlist}  → /usr/share/wordlists/dirb/common.txt
+#                       {smalllist}→ attacks/wordlists/top100_passwords.txt  (generated)
+#   expected_blueprint: what classify should produce
+#   expected_modes:     list of modes the agent is expected to switch to
+#   timeout_s:          max seconds to let the tool run before kill
+#   notes:              brief description
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Category: SSH Brute Force  (hydra / medusa)  — 16 entries
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: real_ssh_hydra_root
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l root -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 90
+  notes: "Hydra root-only spray, small wordlist"
+
+- id: real_ssh_hydra_admin
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l admin -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 90
+  notes: "Hydra admin-only spray"
+
+- id: real_ssh_hydra_backup
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l backup -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 90
+  notes: "Hydra backup account spray — direct trigger for expose_fake_backup"
+
+- id: real_ssh_hydra_multi_user
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -L attacks/wordlists/ssh_users.txt -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 120
+  notes: "Multi-username spray: root/admin/backup/ubuntu/pi/user/test"
+
+- id: real_ssh_hydra_ubuntu
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l ubuntu -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 90
+  notes: "ubuntu user — scores SSH port but no backup/admin trigger"
+
+- id: real_ssh_medusa_root
+  category: ssh_brute_force
+  tool: medusa
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "medusa -h {host} -n {port} -u root -P {smalllist} -M ssh -t 4 -f"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 90
+  notes: "Medusa root spray — tool diversity"
+
+- id: real_ssh_medusa_admin
+  category: ssh_brute_force
+  tool: medusa
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "medusa -h {host} -n {port} -u admin -P {smalllist} -M ssh -t 4 -f"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 90
+  notes: "Medusa admin spray"
+
+- id: real_ssh_hydra_service_accounts
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -L attacks/wordlists/service_accounts.txt -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 90
+  notes: "Service accounts only (no admin/backup/root) — should NOT trigger expose_fake_backup"
+
+- id: real_ssh_hydra_fast_root
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l root -P {smalllist} -t 8 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 60
+  notes: "High-thread root spray to stress Cowrie"
+
+- id: real_ssh_hydra_pi
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l pi -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 90
+  notes: "Raspberry Pi default account targeting"
+
+- id: real_ssh_hydra_test
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l test -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 90
+  notes: "test user — SSH port match only"
+
+- id: real_ssh_hydra_deploy
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -l deploy -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 90
+  notes: "deploy service account — non-trigger username"
+
+- id: real_ssh_medusa_multi
+  category: ssh_brute_force
+  tool: medusa
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "medusa -h {host} -n {port} -U attacks/wordlists/ssh_users.txt -P {smalllist} -M ssh -t 4"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 120
+  notes: "Medusa multi-user, covers backup trigger"
+
+- id: real_ssh_hydra_backup_root_combo
+  category: ssh_brute_force
+  tool: hydra
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "hydra -L attacks/wordlists/high_value_users.txt -P {smalllist} -t 4 -s {port} -o /dev/null ssh://{host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 120
+  notes: "backup+root+admin only — deterministic trigger"
+
+- id: real_ssh_nmap_scan
+  category: vulnerability_scan
+  tool: nmap
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "nmap -sV -p {port} --script ssh-auth-methods,ssh2-enum-algos {host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 60
+  notes: "Nmap SSH service scan — produces SSH events without brute force"
+
+- id: real_ssh_nmap_brute
+  category: vulnerability_scan
+  tool: nmap
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "nmap -p {port} --script ssh-brute --script-args userdb=attacks/wordlists/high_value_users.txt,passdb=attacks/wordlists/top100_passwords.txt {host}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 120
+  notes: "Nmap ssh-brute NSE — alternative tool path"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Category: Web Enumeration / Directory Fuzzing  (gobuster / ffuf / nikto)  — 14 entries
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: real_web_gobuster_dir
+  category: web_enumeration
+  tool: gobuster
+  target_blueprint: web_attack
+  port_key: web
+  command: "gobuster dir -u http://{host}:{port} -w {dirlist} -q -t 10 --no-error"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel, expose_fake_config]
+  timeout_s: 120
+  notes: "Gobuster common dirs — hits /admin, /.env, /config, /backup"
+
+- id: real_web_gobuster_ext
+  category: web_enumeration
+  tool: gobuster
+  target_blueprint: web_attack
+  port_key: web
+  command: "gobuster dir -u http://{host}:{port} -w {dirlist} -x php,bak,env,sql -q -t 10 --no-error"
+  expected_blueprint: web_attack
+  expected_modes: [expose_fake_config]
+  timeout_s: 120
+  notes: "Gobuster with .php/.bak/.env/.sql extensions — targets config files"
+
+- id: real_web_ffuf_dir
+  category: web_enumeration
+  tool: ffuf
+  target_blueprint: web_attack
+  port_key: web
+  command: "ffuf -u http://{host}:{port}/FUZZ -w {dirlist} -mc 200,301,302,401,403 -t 20 -s"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel, expose_fake_config]
+  timeout_s: 120
+  notes: "ffuf directory fuzz — fast, wide coverage"
+
+- id: real_web_ffuf_config
+  category: web_enumeration
+  tool: ffuf
+  target_blueprint: web_attack
+  port_key: web
+  command: "ffuf -u http://{host}:{port}/FUZZ -w attacks/wordlists/config_paths.txt -mc 200,301,302,401 -t 10 -s"
+  expected_blueprint: web_attack
+  expected_modes: [expose_fake_config]
+  timeout_s: 60
+  notes: "ffuf targeted at config/credential paths — /.env, /config, /backup/db.sql"
+
+- id: real_web_nikto_basic
+  category: vulnerability_scan
+  tool: nikto
+  target_blueprint: web_attack
+  port_key: web
+  command: "nikto -h http://{host}:{port} -nointeractive -Tuning 1234 -timeout 5"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 120
+  notes: "Nikto basic scan — hits admin paths with various checks"
+
+- id: real_web_nikto_full
+  category: vulnerability_scan
+  tool: nikto
+  target_blueprint: web_attack
+  port_key: web
+  command: "nikto -h http://{host}:{port} -nointeractive -timeout 5"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel, expose_fake_config]
+  timeout_s: 180
+  notes: "Nikto full scan with all tuning options"
+
+- id: real_web_nmap_http
+  category: vulnerability_scan
+  tool: nmap
+  target_blueprint: web_attack
+  port_key: web
+  command: "nmap -p {port} --script http-enum,http-methods,http-title {host}"
+  expected_blueprint: web_attack
+  expected_modes: []
+  timeout_s: 60
+  notes: "Nmap HTTP scripts — enumeration without heavy path probing"
+
+- id: real_web_nmap_sqli
+  category: web_exploitation
+  tool: nmap
+  target_blueprint: web_attack
+  port_key: web
+  command: "nmap -p {port} --script http-sql-injection {host}"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 90
+  notes: "Nmap SQL injection scan against login form"
+
+- id: real_web_curl_admin_probe
+  category: web_exploitation
+  tool: curl
+  target_blueprint: web_attack
+  port_key: web
+  command: "python3 attacks/scripts/curl_admin_probe.py {host} {port}"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel, expose_fake_config]
+  timeout_s: 60
+  notes: "curl script: repeated admin/login GETs + POST brute + .env/.config probes"
+
+- id: real_web_curl_sqli_payloads
+  category: web_exploitation
+  tool: curl
+  target_blueprint: web_attack
+  port_key: web
+  command: "python3 attacks/scripts/curl_sqli.py {host} {port}"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 60
+  notes: "curl SQLi payloads against /login and /admin"
+
+- id: real_web_hydra_login
+  category: credential_attack
+  tool: hydra
+  target_blueprint: web_attack
+  port_key: web
+  command: "hydra -l admin -P {smalllist} -t 4 http-post-form://\"{host}:{port}/login:username=^USER^&password=^PASS^:401\""
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 90
+  notes: "Hydra HTTP POST form brute against /login"
+
+- id: real_web_hydra_admin_form
+  category: credential_attack
+  tool: hydra
+  target_blueprint: web_attack
+  port_key: web
+  command: "hydra -l root -P {smalllist} -t 4 http-post-form://\"{host}:{port}/admin:username=^USER^&password=^PASS^:401\""
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 90
+  notes: "Hydra HTTP POST against /admin form"
+
+- id: real_web_bot_activity
+  category: bot_activity
+  tool: curl
+  target_blueprint: web_attack
+  port_key: web
+  command: "python3 attacks/scripts/bot_activity.py {host} {port}"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel, expose_fake_config]
+  timeout_s: 60
+  notes: "Simulated bot: random UA rotation, mixed rapid GET/POST, common paths"
+
+- id: real_web_ffuf_passwords
+  category: credential_attack
+  tool: ffuf
+  target_blueprint: web_attack
+  port_key: web
+  command: "ffuf -u http://{host}:{port}/login -X POST -d 'username=admin&password=FUZZ' -w {smalllist} -mc 200,302 -t 10 -s"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 90
+  notes: "ffuf POST credential brute against /login"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Category: SSH Post-Exploitation  (#1 — multiple attack categories)  — 6 entries
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: real_ssh_postex_light
+  category: ssh_post_exploitation
+  tool: paramiko
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/postex_ssh.py {host} {port} light"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 120
+  notes: "paramiko post-exploit: login + basic recon commands (id, uname, ls)"
+
+- id: real_ssh_postex_heavy
+  category: ssh_post_exploitation
+  tool: paramiko
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/postex_ssh.py {host} {port} heavy"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup, fake_admin_success]
+  timeout_s: 180
+  notes: "paramiko post-exploit: full credential/file enumeration, downloads decoys"
+
+- id: real_ssh_postex_backup_read
+  category: ssh_post_exploitation
+  tool: paramiko
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/postex_ssh.py {host} {port} backup"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 120
+  notes: "paramiko: login as backup, read decoy files"
+
+- id: real_ssh_postex_root_escalation
+  category: ssh_post_exploitation
+  tool: paramiko
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/postex_ssh.py {host} {port} root_escalate"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup, fake_admin_success]
+  timeout_s: 180
+  notes: "paramiko: escalation from backup → root-level access simulation"
+
+- id: real_ssh_postex_data_exfil
+  category: ssh_post_exploitation
+  tool: paramiko
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/postex_ssh.py {host} {port} exfil"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup, fake_admin_success]
+  timeout_s: 180
+  notes: "paramiko: full exfil simulation — wget decoys, cat creds, enumerate history"
+
+- id: real_ssh_recon_only
+  category: ssh_post_exploitation
+  tool: paramiko
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/postex_ssh.py {host} {port} recon"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 60
+  notes: "paramiko: login only + minimal recon, no backup/admin username → no switch expected"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Category: Unknown / Monitor-Only  — 4 entries
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: real_unknown_smb_probe
+  category: unknown
+  tool: nmap
+  target_blueprint: monitor_only
+  port_key: null
+  command: "nmap -sV -p 445 {host}"
+  expected_blueprint: monitor_only
+  expected_modes: []
+  timeout_s: 30
+  notes: "SMB port probe — no matching blueprint, monitor_only expected"
+
+- id: real_unknown_mysql_probe
+  category: unknown
+  tool: nmap
+  target_blueprint: monitor_only
+  port_key: null
+  command: "nmap -sV -p 3306 {host}"
+  expected_blueprint: monitor_only
+  expected_modes: []
+  timeout_s: 30
+  notes: "MySQL port probe — monitor_only"
+
+- id: real_unknown_rdp_probe
+  category: unknown
+  tool: nmap
+  target_blueprint: monitor_only
+  port_key: null
+  command: "nmap -sV -p 3389 {host}"
+  expected_blueprint: monitor_only
+  expected_modes: []
+  timeout_s: 30
+  notes: "RDP port probe — no blueprint for RDP yet"
+
+- id: real_unknown_ftp_probe
+  category: unknown
+  tool: nmap
+  target_blueprint: monitor_only
+  port_key: null
+  command: "nmap -sV -p 21 {host}"
+  expected_blueprint: monitor_only
+  expected_modes: []
+  timeout_s: 30
+  notes: "FTP scan — monitor_only expected"
+
+# Total: 16 SSH brute + 14 web enum + 6 SSH post-exploit + 4 unknown = 40 entries
+# Additional entries can be added as msf/aux module sessions (optional, flagged heavy).
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Category: Metasploit Auxiliary Modules  (optional / heavy)  — 4 entries
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: real_msf_ssh_login
+  category: ssh_brute_force
+  tool: msfconsole
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/msf_run.py ssh_login {host} {port}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: [expose_fake_backup]
+  timeout_s: 180
+  notes: "Metasploit auxiliary/scanner/ssh/ssh_login — uses root/admin/backup accounts"
+  optional: true
+
+- id: real_msf_http_dir
+  category: web_enumeration
+  tool: msfconsole
+  target_blueprint: web_attack
+  port_key: web
+  command: "python3 attacks/scripts/msf_run.py http_dir {host} {port}"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 180
+  notes: "Metasploit auxiliary/scanner/http/dir_scanner"
+  optional: true
+
+- id: real_msf_ssh_enum
+  category: vulnerability_scan
+  tool: msfconsole
+  target_blueprint: ssh_bruteforce
+  port_key: ssh
+  command: "python3 attacks/scripts/msf_run.py ssh_enum {host} {port}"
+  expected_blueprint: ssh_bruteforce
+  expected_modes: []
+  timeout_s: 120
+  notes: "Metasploit SSH user enumeration (timing attack)"
+  optional: true
+
+- id: real_msf_http_login
+  category: credential_attack
+  tool: msfconsole
+  target_blueprint: web_attack
+  port_key: web
+  command: "python3 attacks/scripts/msf_run.py http_login {host} {port}"
+  expected_blueprint: web_attack
+  expected_modes: [fake_admin_panel]
+  timeout_s: 180
+  notes: "Metasploit http_login scanner against /login"
+  optional: true

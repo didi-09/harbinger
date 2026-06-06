@@ -1,0 +1,10 @@
+{
+  "name": "ssh_bruteforce",
+  "description": "Cowrie SSH honeypot for brute force attackers",
+  "image": "cowrie/cowrie:latest",
+  "ports": {"22": "2222"},
+  "allowed_modes": ["default", "expose_fake_backup", "fake_admin_success"],
+  "log_format": "cowrie",
+  "honeyfs_mount": "/cowrie/var/lib/cowrie/honeyfs",
+  "logs_mount": "/cowrie/var/log/cowrie"
+}

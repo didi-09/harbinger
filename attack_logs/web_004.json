@@ -1,0 +1,14 @@
+{
+  "id": "web_004",
+  "source_ip": "172.20.1.5",
+  "destination_port": 80,
+  "timestamp": "2025-05-11T08:00:00Z",
+  "events": [
+    "GET /.env HTTP/1.1 200",
+    "GET /config.php.bak HTTP/1.1 404",
+    "GET /backup/db.sql HTTP/1.1 404",
+    "POST /admin HTTP/1.1 401",
+    "POST /admin HTTP/1.1 401",
+    "POST /admin HTTP/1.1 401"
+  ]
+}

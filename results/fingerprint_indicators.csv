@@ -1,0 +1,11 @@
+trial,blueprint,backdated,mtime_age_days_before_switch,mtime_age_days_after_switch,mtime_anomaly_detectable,dirlist_delta_detectable,response_timing_anomaly_ms,error,ts
+1,ssh,True,,,,False,5261.9,,2026-06-01T19:36:16.276323+00:00
+2,ssh,True,,,,False,5221.3,,2026-06-01T19:36:32.893452+00:00
+3,ssh,True,,,,False,5183.3,,2026-06-01T19:36:49.537083+00:00
+4,ssh,True,,,,False,5224.5,,2026-06-01T19:37:06.136977+00:00
+5,ssh,True,,,,False,5241.4,,2026-06-01T19:37:22.708477+00:00
+6,ssh,True,,,,False,5146.1,,2026-06-01T19:37:39.308645+00:00
+7,ssh,True,,,,False,5261.3,,2026-06-01T19:37:55.759451+00:00
+8,ssh,True,,,,False,5220.9,,2026-06-01T19:38:12.339767+00:00
+9,ssh,True,,,,False,5226.2,,2026-06-01T19:38:28.936829+00:00
+10,ssh,True,,,,False,5275.1,,2026-06-01T19:38:45.628614+00:00

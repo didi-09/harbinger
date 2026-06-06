@@ -1,0 +1,10 @@
+{
+  "name": "web_attack",
+  "description": "Flask web honeypot for web-based attackers",
+  "image": "honeypot-flask:latest",
+  "ports": {"80": "8080"},
+  "allowed_modes": ["default", "fake_admin_panel", "expose_fake_config"],
+  "log_format": "flask",
+  "honeyfs_mount": "/app/honeyfs",
+  "logs_mount": "/app/logs"
+}

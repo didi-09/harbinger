@@ -1,0 +1,39 @@
+{
+  "confidence_thresholds": {
+    "deploy": 0.6,
+    "monitor_only_fallback": true
+  },
+  "score_weights": {
+    "connection": 1,
+    "login_attempt": 2,
+    "command_executed": 3,
+    "file_read": 4,
+    "file_download": 5,
+    "no_new_activity": -2
+  },
+  "loop_control": {
+    "max_steps": 10,
+    "high_engagement_threshold": 10,
+    "collapse_threshold": 0,
+    "collapse_min_steps": 3
+  },
+  "allowed_blueprints": ["ssh_bruteforce", "web_attack", "monitor_only"],
+  "allowed_commands": ["classify", "deploy", "logs", "behavior", "report", "stop"],
+  "ssh_bruteforce": {
+    "trigger_usernames": ["backup", "admin", "root"],
+    "admin_paths": ["/admin", "/login", "/dashboard"],
+    "config_paths": ["/.env", "/config", "/backup", "/config.php"]
+  },
+  "classify_rules": {
+    "ssh_bruteforce": {
+      "ports": [22],
+      "keywords": ["Failed password", "Invalid user", "authentication failure", "ssh", "sshd"],
+      "usernames": ["root", "admin", "backup", "ubuntu", "pi", "user", "test"]
+    },
+    "web_attack": {
+      "ports": [80, 443, 8080, 8443],
+      "keywords": ["GET", "POST", "HTTP", "sql", "SELECT", "UNION", "script", "alert", "passwd", ".env", "wp-admin", "phpmyadmin"],
+      "paths": ["/admin", "/login", "/.env", "/config", "/backup", "/wp-admin", "/phpmyadmin"]
+    }
+  }
+}

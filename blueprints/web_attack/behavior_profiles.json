@@ -1,0 +1,39 @@
+{
+  "blueprint": "web_attack",
+  "modes": {
+    "default": {
+      "description": "Basic site. Login form returns 401.",
+      "files": []
+    },
+    "fake_admin_panel": {
+      "description": "Login succeeds and shows a fake admin dashboard.",
+      "trigger_hint": "attacker POST to /admin or /login multiple times",
+      "replace": false,
+      "files": [
+        {
+          "path": "www/admin/dashboard.html",
+          "template": "decoys/admin_dashboard.html.j2"
+        },
+        {
+          "path": "www/admin/users.json",
+          "template": "decoys/admin_users.json.j2"
+        }
+      ]
+    },
+    "expose_fake_config": {
+      "description": "Expose a config backup file with fake DB credentials.",
+      "trigger_hint": "attacker probed /.env or /config or /backup",
+      "replace": false,
+      "files": [
+        {
+          "path": "www/.env",
+          "template": "decoys/env.j2"
+        },
+        {
+          "path": "www/config.php.bak",
+          "template": "decoys/config_php_bak.j2"
+        }
+      ]
+    }
+  }
+}

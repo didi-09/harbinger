@@ -1,0 +1,13 @@
+{
+  "id": "ssh_002",
+  "source_ip": "192.168.1.44",
+  "destination_port": 22,
+  "timestamp": "2025-05-11T02:15:00Z",
+  "events": [
+    "Failed password for deploy from 192.168.1.44 port 41001 ssh2",
+    "Failed password for backup from 192.168.1.44 port 41002 ssh2",
+    "Failed password for sysbackup from 192.168.1.44 port 41003 ssh2",
+    "Failed password for backup from 192.168.1.44 port 41004 ssh2",
+    "Failed password for deploy from 192.168.1.44 port 41005 ssh2"
+  ]
+}
